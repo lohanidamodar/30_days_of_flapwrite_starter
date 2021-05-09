@@ -1,3 +1,6 @@
+import 'package:appwrite/appwrite.dart';
+import 'package:flappwrite_water_tracker/data/service/api_service.dart';
+import 'package:flappwrite_water_tracker/pages/home.dart';
 import 'package:flutter/material.dart';
 import './signup.dart';
 
@@ -53,6 +56,15 @@ class _LoginPageState extends State<LoginPage> {
             ElevatedButton(
               onPressed: () async {
                 //login user
+                try {
+                  await ApiService.instance
+                      .login(email: _email.text, password: _password.text);
+                  Navigator.pushReplacement(
+                      context, MaterialPageRoute(builder: (_) => HomePage()));
+                } on AppwriteException catch (e) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(e.message ?? "Unknown error")));
+                }
               },
               child: Text("Login"),
             ),

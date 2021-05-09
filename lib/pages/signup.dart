@@ -1,3 +1,5 @@
+import 'package:appwrite/appwrite.dart';
+import 'package:flappwrite_water_tracker/data/service/api_service.dart';
 import 'package:flutter/material.dart';
 
 class SignupPage extends StatefulWidget {
@@ -65,6 +67,20 @@ class _SignupPageState extends State<SignupPage> {
             ElevatedButton(
               onPressed: () async {
                 //register user
+                try {
+                  await ApiService.instance.signup(
+                    email: _email.text,
+                    password: _password.text,
+                    name: _name.text,
+                  );
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content:
+                          Text("Successfully signed up. Login to access")));
+                  Navigator.pop(context);
+                } on AppwriteException catch (e) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(e.message ?? "Unknown error")));
+                }
               },
               child: Text("Signup"),
             ),

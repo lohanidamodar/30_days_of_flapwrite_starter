@@ -2,6 +2,8 @@ import 'package:carousel_slider/carousel_controller.dart';
 import 'package:carousel_slider/carousel_options.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flappwrite_water_tracker/data/model/water_intake.dart';
+import 'package:flappwrite_water_tracker/data/service/api_service.dart';
+import 'package:flappwrite_water_tracker/main.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
@@ -38,6 +40,9 @@ class _HomePageState extends State<HomePage> {
             icon: Icon(Icons.exit_to_app),
             onPressed: () async {
               //Logout
+              await ApiService.instance.logOut();
+              Navigator.pushReplacement(
+                  context, MaterialPageRoute(builder: (_) => MainScreen()));
             },
           ),
         ],

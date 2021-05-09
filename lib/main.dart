@@ -1,4 +1,7 @@
+import 'package:flappwrite_water_tracker/data/service/api_service.dart';
 import 'package:flappwrite_water_tracker/pages/home.dart';
+import 'package:flappwrite_water_tracker/pages/login.dart';
+import 'package:flappwrite_water_tracker/pages/splash.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -30,7 +33,22 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      home: HomePage(),
+      home: MainScreen(),
+    );
+  }
+}
+
+class MainScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: ApiService.instance.getUser(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting)
+          return SplashPage();
+        if (snapshot.hasData) return HomePage();
+        return LoginPage();
+      },
     );
   }
 }
