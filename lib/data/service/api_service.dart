@@ -40,4 +40,8 @@ class ApiService {
   Future logOut() {
     return _account.deleteSession(sessionId: 'current');
   }
+
+  Future oAuthLogin(String provider) {
+    return _account.createOAuth2Session(provider: provider);
+  }
 }
