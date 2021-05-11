@@ -4,6 +4,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flappwrite_water_tracker/data/model/water_intake.dart';
 import 'package:flappwrite_water_tracker/data/service/api_service.dart';
 import 'package:flappwrite_water_tracker/main.dart';
+import 'package:flappwrite_water_tracker/pages/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
@@ -36,6 +37,13 @@ class _HomePageState extends State<HomePage> {
         title: Text('FlAppwrite Water Tracker'),
         elevation: 0,
         actions: [
+          IconButton(
+            icon: Icon(Icons.person),
+            onPressed: () {
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (_) => ProfilePage()));
+            },
+          ),
           IconButton(
             icon: Icon(Icons.exit_to_app),
             onPressed: () async {

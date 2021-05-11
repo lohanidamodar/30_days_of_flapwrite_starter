@@ -11,7 +11,7 @@ class ApiService {
   ApiService._internal() {
     _client = Client(
       endPoint: AppConstant.endpoint,
-    ).setProject(AppConstant.project);
+    ).setProject(AppConstant.project).setSelfSigned();
     _account = Account(_client);
     _db = Database(_client);
   }
@@ -43,5 +43,10 @@ class ApiService {
 
   Future oAuthLogin(String provider) {
     return _account.createOAuth2Session(provider: provider);
+  }
+
+  Future verifyEmail() {
+    return _account.createVerification(
+        url: 'http://192.168.1.64:5500/complete_verify.html');
   }
 }
