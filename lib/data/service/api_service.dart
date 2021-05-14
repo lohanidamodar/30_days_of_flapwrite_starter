@@ -7,6 +7,7 @@ class ApiService {
   late final Client _client;
   late final Account _account;
   late final Database _db;
+  late final Teams _teams;
 
   ApiService._internal() {
     _client = Client(
@@ -14,6 +15,7 @@ class ApiService {
     ).setProject(AppConstant.project).setSelfSigned();
     _account = Account(_client);
     _db = Database(_client);
+    _teams = Teams(_client);
   }
 
   static ApiService get instance {
@@ -48,5 +50,30 @@ class ApiService {
   Future verifyEmail() {
     return _account.createVerification(
         url: 'http://192.168.1.64:5500/complete_verify.html');
+  }
+
+  Future listTeams() {
+    return _teams.list();
+  }
+
+  Future createTeam(String name) {
+    return _teams.create(name: name);
+  }
+
+  Future deleteTeam(String id) {
+    return _teams.delete(teamId: id);
+  }
+
+  Future listMembers(String teamId) {
+    return _teams.getMemberships(teamId: teamId);
+  }
+
+  Future addMember({required String teamId, required String email, required List<String> roles, }) {
+    return _teams.createMembership(
+        teamId: teamId, email: email, roles: roles, url: 'http://localhost');
+  }
+
+  Future deleteMember({required String teamId, required String membershipId}) {
+    return _teams.deleteMembership(teamId: teamId, inviteId: membershipId);
   }
 }
