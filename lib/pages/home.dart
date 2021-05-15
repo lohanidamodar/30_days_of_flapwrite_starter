@@ -1,6 +1,8 @@
+import 'package:appwrite/appwrite.dart';
 import 'package:carousel_slider/carousel_controller.dart';
 import 'package:carousel_slider/carousel_options.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flappwrite_water_tracker/data/model/user.dart';
 import 'package:flappwrite_water_tracker/data/model/water_intake.dart';
 import 'package:flappwrite_water_tracker/data/service/api_service.dart';
 import 'package:flappwrite_water_tracker/main.dart';
@@ -13,6 +15,9 @@ import 'package:liquid_progress_indicator_ns/liquid_progress_indicator.dart';
 import 'history.dart';
 
 class HomePage extends StatefulWidget {
+  final User user;
+
+  const HomePage({Key? key, required this.user}) : super(key: key);
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -28,6 +33,16 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     _controller = CarouselController();
+    _getIntakes();
+  }
+
+  _getIntakes() async {
+    intakes = await ApiService.instance.getIntakes();
+    todaysIntake = 0;
+    intakes.forEach((intake) {
+      todaysIntake += intake.amount;
+    });
+    if (mounted) setState(() {});
   }
 
   @override
@@ -78,6 +93,7 @@ class _HomePageState extends State<HomePage> {
                       builder: (_) => HistoryPage(),
                     ),
                   );
+                  _getIntakes();
                 },
               ),
             ),
@@ -171,6 +187,21 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       todaysIntake += amount;
     });
+    final data = WaterIntake(
+      amount: amount,
+      date: DateTime.now(),
+      userId: widget.user.id,
+      id: '',
+    );
+    try {
+      await ApiService.instance.addIntake(
+          intake: data,
+          read: ['user:${widget.user.id}'],
+          write: ['user:${widget.user.id}']);
+      _getIntakes();
+    } on AppwriteException catch (e) {
+      print(e.message);
+    }
   }
 }
 

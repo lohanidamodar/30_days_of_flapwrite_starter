@@ -1,4 +1,5 @@
 import 'package:flappwrite_water_tracker/data/model/water_intake.dart';
+import 'package:flappwrite_water_tracker/data/service/api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -15,6 +16,13 @@ class _HistoryPageState extends State<HistoryPage> {
   @override
   void initState() {
     super.initState();
+    _getIntakes();
+  }
+
+  _getIntakes() async {
+    intakes = await ApiService.instance.getIntakes();
+    loading = false;
+    if (mounted) setState(() {});
   }
 
   @override
@@ -43,6 +51,8 @@ class _HistoryPageState extends State<HistoryPage> {
                       icon: Icon(Icons.delete),
                       onPressed: () async {
                         //delete
+                        await ApiService.instance.deleteIntake(intake.id);
+                        _getIntakes();
                       },
                     ),
                   );

@@ -1,5 +1,6 @@
 import 'package:appwrite/appwrite.dart';
 import 'package:flappwrite_water_tracker/data/model/user.dart';
+import 'package:flappwrite_water_tracker/data/model/water_intake.dart';
 import 'package:flappwrite_water_tracker/res/app_constants.dart';
 
 class ApiService {
@@ -68,12 +69,41 @@ class ApiService {
     return _teams.getMemberships(teamId: teamId);
   }
 
-  Future addMember({required String teamId, required String email, required List<String> roles, }) {
+  Future addMember({
+    required String teamId,
+    required String email,
+    required List<String> roles,
+  }) {
     return _teams.createMembership(
         teamId: teamId, email: email, roles: roles, url: 'http://localhost');
   }
 
   Future deleteMember({required String teamId, required String membershipId}) {
     return _teams.deleteMembership(teamId: teamId, inviteId: membershipId);
+  }
+
+  Future<WaterIntake> addIntake(
+      {required WaterIntake intake,
+      required List<String> read,
+      required List<String> write}) async {
+    final res = await _db.createDocument(
+        collectionId: AppConstant.entriesCollection,
+        data: intake.toMap(),
+        read: read,
+        write: write);
+    return WaterIntake.fromMap(res.data);
+  }
+
+  Future<List<WaterIntake>> getIntakes() async {
+    final res =
+        await _db.listDocuments(collectionId: AppConstant.entriesCollection);
+    return List<Map<String, dynamic>>.from(res.data['documents'])
+        .map((e) => WaterIntake.fromMap(e))
+        .toList();
+  }
+
+  Future deleteIntake(String id) async {
+    return await _db.deleteDocument(
+        collectionId: AppConstant.entriesCollection, documentId: id);
   }
 }

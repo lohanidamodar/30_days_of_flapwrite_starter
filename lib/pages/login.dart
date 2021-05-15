@@ -61,7 +61,7 @@ class _LoginPageState extends State<LoginPage> {
                   await ApiService.instance
                       .login(email: _email.text, password: _password.text);
                   Navigator.pushReplacement(
-                      context, MaterialPageRoute(builder: (_) => HomePage()));
+                      context, MaterialPageRoute(builder: (_) => MainScreen()));
                 } on AppwriteException catch (e) {
                   ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text(e.message ?? "Unknown error")));
