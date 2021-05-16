@@ -94,9 +94,19 @@ class ApiService {
     return WaterIntake.fromMap(res.data);
   }
 
-  Future<List<WaterIntake>> getIntakes() async {
-    final res =
-        await _db.listDocuments(collectionId: AppConstant.entriesCollection);
+  Future<List<WaterIntake>> getIntakes({DateTime? date}) async {
+    date = date ?? DateTime.now();
+    final from = DateTime(date.year, date.month, date.day, 0);
+    final to = DateTime(date.year, date.month, date.day, 23, 59, 59);
+    final res = await _db.listDocuments(
+        collectionId: AppConstant.entriesCollection,
+        filters: [
+          'date>=${from.millisecondsSinceEpoch}',
+          'date<=${to.millisecondsSinceEpoch}'
+        ],
+        orderField: 'date',
+        orderType: OrderType.desc);
+    print("Total: ${res.data['sum']}");
     return List<Map<String, dynamic>>.from(res.data['documents'])
         .map((e) => WaterIntake.fromMap(e))
         .toList();

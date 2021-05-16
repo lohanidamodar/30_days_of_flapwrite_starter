@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:appwrite/appwrite.dart';
 import 'package:carousel_slider/carousel_controller.dart';
 import 'package:carousel_slider/carousel_options.dart';
@@ -189,7 +191,7 @@ class _HomePageState extends State<HomePage> {
     });
     final data = WaterIntake(
       amount: amount,
-      date: DateTime.now(),
+      date: DateTime.now().add(Duration(days: Random().nextInt(5))),
       userId: widget.user.id,
       id: '',
     );
