@@ -12,6 +12,7 @@ class ApiService {
   late final Database _db;
   late final Teams _teams;
   late final Storage _storage;
+  late final Avatars _avatars;
 
   ApiService._internal() {
     _client = Client(
@@ -21,6 +22,7 @@ class ApiService {
     _db = Database(_client);
     _teams = Teams(_client);
     _storage = Storage(_client);
+    _avatars = Avatars(_client);
   }
 
   static ApiService get instance {
@@ -139,6 +141,21 @@ class ApiService {
   Future<Uint8List> getProfilePicture(String fileId) async {
     final res =
         await _storage.getFilePreview(fileId: fileId, width: 100, height: 100);
+    return res.data;
+  }
+
+  Future<Uint8List> getCountryFlag(String code) async {
+    final res = await _avatars.getFlag(code: code);
+    return res.data;
+  }
+
+  Future<Uint8List> getQR(String text) async {
+    final res = await _avatars.getQR(text: text, size: 800);
+    return res.data;
+  }
+
+  Future<Uint8List> getInitials(String name) async {
+    final res = await _avatars.getInitials(name: name);
     return res.data;
   }
 }

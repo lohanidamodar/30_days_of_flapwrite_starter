@@ -88,6 +88,45 @@ class _ProfilePageState extends State<ProfilePage> {
                     );
                   })
             ],
+            FutureBuilder(
+                future: ApiService.instance.getCountryFlag("us"),
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) print(snapshot.error);
+                  return snapshot.hasData
+                      ? Center(
+                          child: Image.memory(
+                            snapshot.data as Uint8List,
+                            fit: BoxFit.contain,
+                          ),
+                        )
+                      : SizedBox();
+                }),
+            FutureBuilder(
+                future: ApiService.instance.getQR(user!.id),
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) print(snapshot.error);
+                  return snapshot.hasData
+                      ? Center(
+                          child: Image.memory(
+                            snapshot.data as Uint8List,
+                            fit: BoxFit.contain,
+                          ),
+                        )
+                      : SizedBox();
+                }),
+            FutureBuilder(
+                future: ApiService.instance.getInitials("Lohani Damodar"),
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) print(snapshot.error);
+                  return snapshot.hasData
+                      ? Center(
+                          child: Image.memory(
+                            snapshot.data as Uint8List,
+                            fit: BoxFit.contain,
+                          ),
+                        )
+                      : SizedBox();
+                }),
             ElevatedButton(
               onPressed: _upload,
               child: Text("Change Picture"),
