@@ -1,5 +1,6 @@
 import 'package:appwrite/appwrite.dart';
 import 'package:flappwrite_water_tracker/data/model/team.dart';
+import 'package:flappwrite_water_tracker/data/model/user.dart';
 import 'package:flappwrite_water_tracker/data/service/api_service.dart';
 import 'package:flappwrite_water_tracker/pages/team_details.dart';
 import 'package:flutter/material.dart';
@@ -11,11 +12,22 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   List<Team> teams = [];
+  User? user;
 
   @override
   void initState() {
     super.initState();
     _getTeams();
+    _getUser();
+  }
+
+  _getUser() async {
+    try {
+      user = await ApiService.instance.getUser();
+      setState(() {});
+    } on AppwriteException catch (e) {
+      print(e.message);
+    }
   }
 
   _getTeams() async {
@@ -55,6 +67,19 @@ class _ProfilePageState extends State<ProfilePage> {
       body: ListView(
         padding: const EdgeInsets.all(16.0),
         children: <Widget>[
+          if (user != null) ...[
+            Text(user!.email),
+            if (user!.prefs["photo"] != null) ...[
+              //display profile picture
+              Container(),
+            ],
+            ElevatedButton(
+              onPressed: () {
+                //upload picture
+              },
+              child: Text("Change Picture"),
+            ),
+          ],
           ElevatedButton(
             onPressed: () async {
               try {

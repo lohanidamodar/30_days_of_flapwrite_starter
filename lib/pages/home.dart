@@ -191,7 +191,7 @@ class _HomePageState extends State<HomePage> {
     });
     final data = WaterIntake(
       amount: amount,
-      date: DateTime.now().add(Duration(days: Random().nextInt(5))),
+      date: DateTime.now(),
       userId: widget.user.id,
       id: '',
     );
