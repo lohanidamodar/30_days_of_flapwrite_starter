@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:appwrite/appwrite.dart';
 import 'package:flappwrite_water_tracker/data/model/user.dart';
 import 'package:flappwrite_water_tracker/data/model/water_intake.dart';
@@ -9,6 +11,7 @@ class ApiService {
   late final Account _account;
   late final Database _db;
   late final Teams _teams;
+  late final Storage _storage;
 
   ApiService._internal() {
     _client = Client(
@@ -17,6 +20,7 @@ class ApiService {
     _account = Account(_client);
     _db = Database(_client);
     _teams = Teams(_client);
+    _storage = Storage(_client);
   }
 
   static ApiService get instance {
@@ -115,5 +119,26 @@ class ApiService {
   Future deleteIntake(String id) async {
     return await _db.deleteDocument(
         collectionId: AppConstant.entriesCollection, documentId: id);
+  }
+
+  Future<Map<String, dynamic>> uploadFile(
+      MultipartFile file, List<String> permission) async {
+    final res = await _storage.createFile(
+      file: file,
+      read: permission,
+      write: permission,
+    );
+    return res.data;
+  }
+
+  Future<Map<String, dynamic>> updatePrefs(Map<String, dynamic> prefs) async {
+    final res = await _account.updatePrefs(prefs: prefs);
+    return res.data;
+  }
+
+  Future<Uint8List> getProfilePicture(String fileId) async {
+    final res =
+        await _storage.getFilePreview(fileId: fileId, width: 100, height: 100);
+    return res.data;
   }
 }

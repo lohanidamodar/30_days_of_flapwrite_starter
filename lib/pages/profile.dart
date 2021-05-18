@@ -1,9 +1,12 @@
+import 'dart:typed_data';
+
 import 'package:appwrite/appwrite.dart';
 import 'package:flappwrite_water_tracker/data/model/team.dart';
 import 'package:flappwrite_water_tracker/data/model/user.dart';
 import 'package:flappwrite_water_tracker/data/service/api_service.dart';
 import 'package:flappwrite_water_tracker/pages/team_details.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -71,12 +74,22 @@ class _ProfilePageState extends State<ProfilePage> {
             Text(user!.email),
             if (user!.prefs["photo"] != null) ...[
               //display profile picture
-              Container(),
+              FutureBuilder(
+                  future: ApiService.instance
+                      .getProfilePicture(user!.prefs["photo"]),
+                  builder: (context, snapshot) {
+                    return Center(
+                      child: CircleAvatar(
+                        radius: 50,
+                        backgroundImage: snapshot.data != null
+                            ? MemoryImage(snapshot.data as Uint8List)
+                            : null,
+                      ),
+                    );
+                  })
             ],
             ElevatedButton(
-              onPressed: () {
-                //upload picture
-              },
+              onPressed: _upload,
               child: Text("Change Picture"),
             ),
           ],
@@ -133,5 +146,23 @@ class _ProfilePageState extends State<ProfilePage> {
         ],
       ),
     );
+  }
+
+  _upload() async {
+    var image = await ImagePicker().getImage(source: ImageSource.gallery);
+    if (image == null) return;
+    final file = await MultipartFile.fromFile(image.path);
+    try {
+      final res =
+          await ApiService.instance.uploadFile(file, ["user:${user!.id}"]);
+      final id = res['\$id'];
+      if (id != null) {
+        //save id to user prefs
+        await ApiService.instance.updatePrefs({"photo": id});
+        _getUser();
+      }
+    } on AppwriteException catch (e) {
+      print(e.message);
+    }
   }
 }
